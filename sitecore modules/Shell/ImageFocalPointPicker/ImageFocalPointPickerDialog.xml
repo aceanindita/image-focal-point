@@ -1,0 +1,131 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<control xmlns:def="Definition" xmlns="http://schemas.sitecore.net/Visual-Studio-Intellisense">
+  <ImageFocalPointPickerDialog>
+    <!--Init Script-->
+
+    <Script src="/sitecore modules/Shell/ImageFocalPointPicker/js/jquery-2.1.0.min.js" key="imageFocalPointPicker" Language="javascript"></Script>
+
+    <Script Language="javascript">
+      var $J = jQuery.noConflict();
+
+      function updateIndicator()
+      {
+      var top = $J('#TextBoxCoordinate').val().split(', ')[0];
+      var left = $J('#TextBoxCoordinate').val().split(', ')[1];
+      $J('#indicator').css("left", left + "%").css("top", top + "%");
+      }
+
+      $J(document).ready(function() {
+
+      if($J('#TextBoxCoordinate').val().length == 0)
+      {
+      $J('#indicator').hide();
+      }
+      else
+      {
+      updateIndicator();
+      }
+
+      $J('#ImageFrame').click(function(e) {
+      var offset = $J('#ImageFrame').offset();
+      var relativeX = e.pageX - offset.left;
+      var relativeY = e.pageY - offset.top;
+
+      var width = $J('#ImageFrame').width();
+      var height = $J('#ImageFrame').height();
+
+      var percentageLeft = Math.round(relativeX * 100 / width);
+      var percentageTop = Math.round(relativeY * 100 / height);
+
+      $J('#TextBoxCoordinate').val('' + percentageTop + ', ' + percentageLeft + '');
+      updateIndicator();
+
+      });
+      });
+    </Script>
+
+    <Stylesheet>
+
+      table tr td {
+      padding-left: 5px;
+      }
+
+      div.form-element {
+      border: 1px;
+      border-style: solid;
+      border-color: black;
+      margin: 2px;
+      background-color: white;
+      }
+
+      div.form-element input {
+      border: 0px;
+      width: 100%;
+      }
+
+      div.form-element.error {
+      border-color: red;
+      }
+
+      div.mapCanvas {
+      width: 450px;
+      }
+
+      #ImageFrame{
+      width:100%;
+      cursor:crosshair;
+      }
+
+      #focalPoint
+      {
+      position: relative;
+      display: inline-block;
+      }
+
+      #indicator
+      {
+      position: absolute;
+      }
+
+      #indicator:before
+      {
+      display: inline-block;
+      background-color: yellow;
+      width: 10px;
+      height: 10px;
+      content: "";
+      border-radius: 50%;
+      }
+
+    </Stylesheet>
+
+    <FormDialog ID="Dialog" Icon="Network/32x32/environment_view.png" Header="Image Focal Point Picker"
+                Text="Pick the focal point by clicking on the image" OKButton="Select">
+
+      <!--Define Code Beside-->
+      <CodeBeside Type="ImageFocalPointPicker.Dialogs.ImageFocalPointPickerDialog, ImageFocalPointPicker"/>
+
+      <Groupbox Header="Current Focal Point" Style="height:50px;">
+        <table width="100%">
+          <tr valign="center">
+            <td width="70%">
+              <div class="form-element">
+                <Edit ID="TextBoxCoordinate" ReadOnly="true" Width="100%" MaxLength="200"/>
+              </div>
+            </td>
+          </tr>
+        </table>
+      </Groupbox>
+
+      <Groupbox Header="Image Frame">
+        <Border class="mapCanvas" ID="mapCanvas">
+          <div id="focalPoint">
+            <Image ID="ImageFrame" />
+            <span id="indicator"></span>
+          </div>
+        </Border>
+      </Groupbox>
+
+    </FormDialog>
+  </ImageFocalPointPickerDialog>
+</control>
